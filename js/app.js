@@ -40,17 +40,16 @@ var NBJS = NBJS || {};
 	}
 
 	function initBodyMeshes(minMass, maxMass) {
-		var bodyMaterial = new THREE.MeshPhongMaterial( { color: 0xffaa00 } );	
 		bodies.forEach( function (body) {
 			var meshRadius = Util.lerpRadiusByMass(0.1, 1, body.mass, minMass, maxMass);
-			body.my_mesh = new BodyMesh(body.coord, meshRadius, 1 - meshRadius + 0.05, 15);
-			updateMyBodyMesh(body.my_mesh, body);
+			body.mesh = new BodyMesh(body.coord, meshRadius, 1 - meshRadius + 0.05, Math.min(25, Math.floor(2250/bodies.length))); 
+			updateMyBodyMesh(body.mesh, body);
 		});				
 	}
 
 	function updateBodyMeshes() {
 		bodies.forEach( function (body) {	
-			updateMyBodyMesh(body.my_mesh, body);
+			updateMyBodyMesh(body.mesh, body);
 		});				
 	}
 
@@ -66,6 +65,10 @@ var NBJS = NBJS || {};
 		requestAnimationFrame(render);				
 	 	renderer.render(bodies, rotation_is_on);
 	};		
+	function moveCamera(first, second) {
+		renderer.moveCamera(first, second,0.5);
+	}
+
 
 	var computeId = null;
 
@@ -97,4 +100,5 @@ var NBJS = NBJS || {};
 	nbjs.start = startSimulation;
 	nbjs.pause = stopCompute;
 	nbjs.resume = startCompute;
+	nbjs.moveCamera = moveCamera;
 })(NBJS);

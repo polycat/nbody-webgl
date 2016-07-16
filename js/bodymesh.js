@@ -9,9 +9,6 @@ function BodyMesh(coord, radius, rotation_angle, resolution) {
     this.generateCraters(2, 2, 10);
 }
 
-function vec3ToArray(vec){
-    return [vec[0],vec[1],vec[2]];
-}
 
 BodyMesh.prototype.generateSphere = function() {
     var getX = function(r, theta, phi) {
@@ -53,9 +50,6 @@ BodyMesh.prototype.generateSphere = function() {
 
             var pointCoods = getCartethian(radius + shift, theta, phi);
             vertices = vertices.concat(pointCoods);
-            //var normal = vec3.create();
-            //vec3.normalize(normal, pointCoods);
-            //normals = normals.concat(vec3ToArray(normal));
         }
     }
     var end_of_iterations = resolution + n * (resolution - 1);

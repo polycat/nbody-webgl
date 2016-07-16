@@ -64,7 +64,7 @@ Render.prototype.createBodyRenders = function (bodies){
 	var bodyRenders = [];
 	if (bodies === undefined) return bodyRenders;
 	for (var i = 0; i < bodies.length; i++) {
-		var br = new BodyRender(bodies[i].id,bodies[i].my_mesh,this.gl, this);
+		var br = new BodyRender(bodies[i].id,bodies[i].mesh,this.gl, this);
 		bodyRenders.push(br);
 	}
 	this.bodyRenders = bodyRenders;
@@ -91,38 +91,39 @@ Render.prototype.drawGL = function () {
 
 
 Render.prototype.initMVP = function() {
-	mat4.lookAt(this.viewMatrix, [10.0, 10.0, 10.0], [0.0, 0.0, 0.0], [0.0, 1.0, 0.0]);
+	mat4.lookAt(this.viewMatrix, [10.0, 10.0, 10.0], [0.0, 0.0, 0.0], [1.0, 0.0, 0.0]);
 	mat4.perspective(this.projectionMatrix, Math.PI/5, this.gl.canvas.clientWidth/this.gl.canvas.clientHeight, 0.01, 1000.0);	
 
 	return this;
 }
 
-var dty = 0,dtx =0, dtz = 0, isScale = false , isPush = false, scale = 1;
+Render.prototype.moveCamera = function(firstCoord,secondCoord,speed) {
+	for (var i = 0; i < 3; i++) {
+		if (firstCoord[i] == secondCoord[i]) continue;
+		var value = speed;
+		if (firstCoord[i] < secondCoord[i]) {
+			speed *= -1;
+		}
+		var direction = [0,0,0];
+		direction[i] = 1;
+		mat4.rotate(this.viewMatrix, this.viewMatrix, speed*Math.PI/180.0, direction);
+	}
+}
+	// if(isScale) {
+	// 	mat4.scale(this.viewMatrix,this.viewMatrix,[scale,scale,scale]);
+	// 	isScale=false;
+	// }
+
+
+
 Render.prototype.render = function (bodies, rotation_is_on) {	
 	this.drawGL();
 	if (this.bodyRenders === undefined) return;
 	for (var i = 0; i < this.bodyRenders.length; i++) {
 		var br = this.bodyRenders[i];
-	 	br.update(bodies[i].coord,bodies[i].my_mesh.rotation_angle, rotation_is_on);
+	 	br.update(bodies[i].coord,bodies[i].mesh.rotation_angle, rotation_is_on);
 	 	br.draw();
 	}
-
-	if(isScale) {
-		mat4.scale(this.viewMatrix,this.viewMatrix,[scale,scale,scale]);
-		isScale=false;
-	}
-	if(dty != 0) {
-		mat4.rotate(this.viewMatrix, this.viewMatrix, -dty*Math.PI/180.0, [0, 1, 0]);
-		dty=0;
-	}	
-	if(dtx != 0) {
-		mat4.rotate(this.viewMatrix, this.viewMatrix, -dtx*Math.PI/180.0, [1, 0, 0]);
-	}		
-	if(dtz != 0) {
-		mat4.rotate(this.viewMatrix, this.viewMatrix, -dtz*Math.PI/180.0, [0, 0, 1]);
-	}	
-
-
 }
 
 
