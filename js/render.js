@@ -55,6 +55,11 @@ Render.prototype.initGL = function () {
 	return this;
 }
 
+Render.prototype.updateCanvasSize = function () {
+	WGL.fitViewportToCanvas(this.gl);
+	this.initMVP();
+}
+
 Render.prototype.createBodyRenders = function (bodies){
 	var bodyRenders = [];
 	if (bodies === undefined) return bodyRenders;

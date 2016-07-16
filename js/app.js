@@ -3,19 +3,17 @@
 var NBJS = NBJS || {};
 
 (function(nbjs) {	
-	var my_renderer;
+	var renderer;
 	var rotation_is_on = false;
 	var bodies = [];	
 
 	function onWindowResize() {
-		// camera.aspect = window.innerWidth / window.innerHeight;
-		// camera.updateProjectionMatrix();
-		// renderer.setSize(window.innerWidth, window.innerHeight);
+		renderer.updateCanvasSize();
 	}
 	
 	function init() {
 		window.addEventListener('resize', onWindowResize, false);
-		my_renderer = new Render();
+		renderer = new Render();
 	}
 
 	function initBodies(numOfBodies) {
@@ -28,7 +26,7 @@ var NBJS = NBJS || {};
 		var maxMass = 100000;
 		bodies = Body.generateRandomBodies(numOfBodies, minMass, maxMass);
 		initBodyMeshes(minMass, maxMass);		
-		my_renderer.createBodyRenders(bodies);
+		renderer.createBodyRenders(bodies);
 	}		
 
 	function updateBodies(delta) {		
@@ -61,12 +59,12 @@ var NBJS = NBJS || {};
 	}
 
 	function clearBodyMeshes() {
-		my_renderer.clear();
+		renderer.clear();
 	}
 	
 	function render() {
 		requestAnimationFrame(render);				
-	 	my_renderer.render(bodies, rotation_is_on);
+	 	renderer.render(bodies, rotation_is_on);
 	};		
 
 	var computeId = null;
