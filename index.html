@@ -5,8 +5,6 @@
 	<meta charset="utf-8">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<script type="text/javascript" src="js/lib/jquery-3.0.0.min.js"></script>
-	<script type="text/javascript" src="js/lib/three.min.js"></script>
-	<script type="text/javascript" src="js/lib/OrbitControls.js"></script>
 	<script type="text/javascript" src="js/lib/requestAnimationFrame.js"></script>		
 	<script type="text/javascript" src="js/lib/gl-matrix-min.js"></script>		
 	<script type="text/javascript" src="js/lib/wgl.js"></script>		
@@ -35,7 +33,7 @@
 
 
 			var $canvas = $("#canvas");
-			var mouse_x,mouse_y;
+			var mouse_x,mouse_y,mouse_z, isPush;
 
 			var isActive = false;
 			$pause.prop("disabled", true);
@@ -59,29 +57,25 @@
 				isActive = !isActive;
 			});
 
-			$canvas.mousewheel( function (event,delta) {  
-				if(delta>0)
-					scale = 1.1;
-				else
-					scale = 0.9;
-				isScale = true;
-			});
+			// $canvas.mousewheel( function (event,delta) {  
+			// 	if(delta>0)
+			// 		scale = 1.1;
+			// 	else
+			// 		scale = 0.9;
+			// 	isScale = true;
+			// });
 			
 			$canvas.mousedown( function (event) {
 				mouse_x=event.pageX;
 				mouse_y=event.pageY;
+				mouse_z=event.pageZ;
 				isPush = true;
 			});
 			
 			$canvas.mousemove( function (event) {
 				if(isPush) {
-					if(mouse_x > event.pageX)
-						{dty=3;mouse_x=event.pageX;}
-					else if(mouse_x != event.pageX)
-						{dty=-3;mouse_x=event.pageX;}
-						/*{dty=3;mouse_y=event.pageY;}
-					else if(mouse_y != event.pageY)
-						{dty=-3;mouse_y=event.pageY;}*/
+					NBJS.moveCamera([mouse_x,mouse_y,mouse_z],
+								[event.pageX,event.pageY,event.pageZ]);
 				}
 			});
 			
