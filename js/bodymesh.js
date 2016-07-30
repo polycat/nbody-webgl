@@ -31,34 +31,47 @@ BodyMesh.prototype.generateSphere = function() {
     var normals = [];
     var textureCoords = [];
 
-	var resolution = this.resolution;
+	var theta_resolution = this.resolution-2;
+    var phi_resolution = this.resolution;
 	var radius = this.radius;
 
-    var phi_step = Math.PI / resolution;
-    var theta_step = 2 * Math.PI / resolution;
+    var phi_step = Math.PI / phi_resolution;
+    var theta_step = 2 * Math.PI / (theta_resolution+2);
     var theta, phi, i, j;
-    var n = resolution + 1;
+    var node_count_i = theta_resolution + 1;
+    var node_count_j = phi_resolution + 1;
+    
     var k = 0;
-    for (theta = Math.PI, i = 0; i < n; theta -= theta_step, i++) {
-        for (phi = 0, j = 0; j < n; phi += phi_step, j++) {
-            var shift = 0;
-     
-            var u = 1 - (j / resolution);
-            var v = 1 - (i / resolution);
+
+    
+    for (theta = Math.PI - theta_step, i = 0; i < node_count_i; theta -= theta_step, i++) {
+        for (phi = 0, j = 0; j < node_count_j; phi += phi_step, j++) {
+            var u = 1 - (j / node_count_j);
+            var v = 1 - (i / node_count_i);
             textureCoords.push(u);
             textureCoords.push(v);
 
-            var pointCoods = getCartethian(radius + shift, theta, phi);
+            var pointCoods = getCartethian(radius, theta, phi);
             vertices = vertices.concat(pointCoods);
         }
     }
-    var end_of_iterations = resolution + n * (resolution - 1);
-    for (var i = 0; i < end_of_iterations; i++) {
-        if (i % n == resolution) continue;
-        indices = indices.concat([i, i + 1, i + n,
-            i + 1, i + n, i + n + 1
-        ]);
+
+    for (var i = 0; i < node_count_i - 1; i++) 
+        for (var j = 0; j < node_count_j - 1; j++) {
+            var index = i*node_count_j + j;
+            indices = indices.concat([index, index + 1, index + node_count_j,
+                index + 1, index + node_count_j, index + node_count_j + 1
+            ]);
     }
+    [0, node_count_i-1].forEach( function(i) {
+        for (var j = 0; j < node_count_j - 1; j++) {
+        var index = i*node_count_j + j;
+           indices = indices.concat([index,index + 1,node_count_i*node_count_j - 1]);
+        }
+    });
+    //for (var j = 0; j < node_count_j - 1; j++) 
+        //indices = indices.concat([(node_count_i - 1)* node_count_j + j, (node_count_i - 1)*node_count_j + j + 1, Math.floor(vertices.length/3)]);
+    vertices = vertices.concat(getCartethian(radius, Math.PI, 1));//, 0,0,radius]);
 
     normals = generateSmoothNormals(vertices,indices);
     this.mesh = {

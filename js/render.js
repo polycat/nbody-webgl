@@ -64,7 +64,7 @@ Render.prototype.createBodyRenders = function (bodies){
 	var bodyRenders = [];
 	if (bodies === undefined) return bodyRenders;
 	for (var i = 0; i < bodies.length; i++) {
-		var br = new BodyRender(bodies[i].id,bodies[i].mesh,this.gl, this);
+		var br = new BodyRender(bodies[i], this);
 		bodyRenders.push(br);
 	}
 	this.bodyRenders = bodyRenders;
@@ -91,29 +91,22 @@ Render.prototype.drawGL = function () {
 
 
 Render.prototype.initMVP = function() {
-	mat4.lookAt(this.viewMatrix, [10.0, 10.0, 10.0], [0.0, 0.0, 0.0], [1.0, 0.0, 0.0]);
-	mat4.perspective(this.projectionMatrix, Math.PI/5, this.gl.canvas.clientWidth/this.gl.canvas.clientHeight, 0.01, 1000.0);	
+	mat4.lookAt(this.viewMatrix, [10.0, 10.0, 10.0], [0.0, 0.0, 0.0], [0.0, 1.0, 0.0]);
+	mat4.perspective(this.projectionMatrix, Math.PI/15, this.gl.canvas.clientWidth/this.gl.canvas.clientHeight, 0.01, 1000.0);	
 
 	return this;
 }
 
-Render.prototype.moveCamera = function(firstCoord,secondCoord,speed) {
-	for (var i = 0; i < 3; i++) {
-		if (firstCoord[i] == secondCoord[i]) continue;
-		var value = speed;
-		if (firstCoord[i] < secondCoord[i]) {
-			speed *= -1;
-		}
-		var direction = [0,0,0];
-		direction[i] = 1;
-		mat4.rotate(this.viewMatrix, this.viewMatrix, speed*Math.PI/180.0, direction);
-	}
-}
-	// if(isScale) {
-	// 	mat4.scale(this.viewMatrix,this.viewMatrix,[scale,scale,scale]);
-	// 	isScale=false;
-	// }
+Render.prototype.moveCamera = function(firstCoord, secondCoord, angle) {
+	if(firstCoord[0] < secondCoord[0])
+		mat4.rotate(this.viewMatrix, this.viewMatrix, angle*Math.PI/180.0, [0, 1, 0]);
+	else if(firstCoord[0] > secondCoord[0])
+		mat4.rotate(this.viewMatrix, this.viewMatrix, -angle*Math.PI/180.0, [0, 1, 0]);
 
+}
+Render.prototype.scaleCamera = function(scaleCoeff) {
+		mat4.scale(this.viewMatrix,this.viewMatrix,[scaleCoeff,scaleCoeff,scaleCoeff]);
+	}
 
 
 Render.prototype.render = function (bodies, rotation_is_on) {	
@@ -127,18 +120,18 @@ Render.prototype.render = function (bodies, rotation_is_on) {
 }
 
 
-function BodyRender(id, mesh,gl, generalRender) {
-	this.id = id;
-	this.gl = gl;
-	this.body = mesh;
+function BodyRender(body, generalRender) {
+	this.id = body.id;
+	this.gl = generalRender.gl;
+	this.body = body.mesh;
 	this.rotation_angle;
-	this.rotation_angle_shift = mesh.rotation_angle;
+	this.rotation_angle_shift = body.mesh.rotation_angle;
 	this.generalRender = generalRender;
 	this.buffers = {};
 	this.modelviewMatrix = mat4.create();
 	this.modelMatrix = mat4.create();
 	this.frameCounter = 0;
-	this.init();
+	this.initBody();
 }
 
 
@@ -225,20 +218,12 @@ BodyRender.prototype.draw = function(){
 BodyRender.prototype.update = function(coord, rotation_angle_shift, rotation_is_on) {
 	mat4.identity(this.modelMatrix);
 	mat4.translate(this.modelMatrix, this.modelMatrix, coord);
-	mat4.rotate(this.modelMatrix, this.modelMatrix, -this.rotation_angle*Math.PI/180.0, [0, 1, 0]);
+	mat4.rotateY(this.modelMatrix, this.modelMatrix, -this.rotation_angle*Math.PI/180.0);
 	if (rotation_is_on) {
 		this.rotation_angle += rotation_angle_shift;
 		if (this.rotation_angle >= 360)
 			this.rotation_angle -= 360;
 	}
-
-
-
-	return this;
-}
-
-BodyRender.prototype.init = function() {
-	this.initBody();	
 	return this;
 }
 

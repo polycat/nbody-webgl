@@ -42,7 +42,7 @@ var NBJS = NBJS || {};
 	function initBodyMeshes(minMass, maxMass) {
 		bodies.forEach( function (body) {
 			var meshRadius = Util.lerpRadiusByMass(0.1, 1, body.mass, minMass, maxMass);
-			body.mesh = new BodyMesh(body.coord, meshRadius, 1 - meshRadius + 0.05, Math.min(25, Math.floor(2250/bodies.length))); 
+			body.mesh = new BodyMesh(body.coord, meshRadius, 1 - meshRadius + 0.05, 20); 
 			updateMyBodyMesh(body.mesh, body);
 		});				
 	}
@@ -64,11 +64,9 @@ var NBJS = NBJS || {};
 	function render() {
 		requestAnimationFrame(render);				
 	 	renderer.render(bodies, rotation_is_on);
-	};		
-	function moveCamera(first, second) {
-		renderer.moveCamera(first, second,0.5);
-	}
+	};	
 
+	
 
 	var computeId = null;
 
@@ -100,5 +98,6 @@ var NBJS = NBJS || {};
 	nbjs.start = startSimulation;
 	nbjs.pause = stopCompute;
 	nbjs.resume = startCompute;
-	nbjs.moveCamera = moveCamera;
+	nbjs.moveCamera = function (first, second) { return renderer.moveCamera(first, second,0.5)};
+	nbjs.scaleCamera = function (coeff) { return renderer.scaleCamera(coeff)};
 })(NBJS);

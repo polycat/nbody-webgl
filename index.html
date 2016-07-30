@@ -33,7 +33,7 @@
 
 
 			var $canvas = $("#canvas");
-			var mouse_x,mouse_y,mouse_z, isPush;
+			var mouse_coord, isPush;
 
 			var isActive = false;
 			$pause.prop("disabled", true);
@@ -57,25 +57,42 @@
 				isActive = !isActive;
 			});
 
-			// $canvas.mousewheel( function (event,delta) {  
-			// 	if(delta>0)
-			// 		scale = 1.1;
-			// 	else
-			// 		scale = 0.9;
-			// 	isScale = true;
+			$canvas.mousewheel( function (event,delta) {  
+				if(delta>0)
+					NBJS.scaleCamera(1.1);
+				else
+					NBJS.scaleCamera(0.9);
+			});
+			
+			// $canvas.mousedown( function (event) {
+			// 	mouse_coord = [event.pageX, event.pageY, event.pageZ];
+			// 	isPush = true;
 			// });
 			
+			// $canvas.mousemove( function (event) {
+			// 	if(isPush) {
+					
+			// 		NBJS.moveCamera(mouse_coord,
+			// 					[event.pageX,event.pageY,event.pageZ]);
+			// 		mouse_coord = [event.pageX,event.pageY,event.pageZ];
+
+			// 	}
+			// });
+			
+			// $canvas.mouseup( function (event) {
+			// 	isPush = false;
+			// });
+
 			$canvas.mousedown( function (event) {
-				mouse_x=event.pageX;
-				mouse_y=event.pageY;
-				mouse_z=event.pageZ;
+			 	mouse_coord = [event.pageX, event.pageY, event.pageZ];
 				isPush = true;
 			});
 			
 			$canvas.mousemove( function (event) {
 				if(isPush) {
-					NBJS.moveCamera([mouse_x,mouse_y,mouse_z],
+					NBJS.moveCamera(mouse_coord,
 								[event.pageX,event.pageY,event.pageZ]);
+					mouse_coord = [event.pageX,event.pageY,event.pageZ];
 				}
 			});
 			
