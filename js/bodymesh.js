@@ -142,50 +142,6 @@ function computeFaceNormal(vertices, i1, i2, i3) {
     return cross;
 }
 
-
-// BodyMesh.prototype.generateCraters = function(count, radius, percent) {
-//     var vertices = this.mesh.vertices;
-//     var diam = 2*radius + 1;
-//     var coeff = (percent / 100)*(-1);
-//     var n = Math.floor(vertices.length/3);
-//     var point_count = this.resolution + 1;
-//     var cratersIndices = Util.getRandomArray(count,0,n - 1);
-//     for (var k = 0; k < cratersIndices.length; k++) {
-//        var craterIndex = cratersIndices[k];
-//        var center = vec3.fromValues(this.mesh.vertices[craterIndex*3],this.mesh.vertices[craterIndex*3+1],this.mesh.vertices[craterIndex*3+2]);
-//        var y = Math.floor(craterIndex /point_count);
-//        var x = craterIndex % point_count;
-//        //for (var i = -radius; i < radius; i++) {
-//        //   for (var j = -radius; j < radius ; j++) {
-//         var begin,end;
-//         var counter;
-//         begin = [-(diam-1)/2,-(diam-1)/2],end = [(diam-1)/2,(diam-1)/2];
-//         var angle;
-//         for (var i = 0; i < diam;i++){
-//             for (counter = -(diam-1)/2; counter < (diam-1)/2;angle+=Math.PI*((1-1/diam)/diam), counter++) {
-//                 var cosin = Math.cos(angle);
-//                 this.ffa(begin[1] + x,begin[0] + y,cosin);
-//            }
-//            begin[0]++;
-//        }
-//     }
-// }
-
-// BodyMesh.prototype.ffa = function(x,y, coeff){
-//     var point_count = this.resolution + 1;
-//     var current_coords = correct_coords([x,y,point_count);
-//     var vertexIndex = current_coords[1]* point_count + current_coords[0];
-//     var vector = vec3.create();
-//     var v1 = vec3.fromValues(this.mesh.vertices[vertexIndex*3],this.mesh.vertices[vertexIndex*3+1],this.mesh.vertices[vertexIndex*3+2]);
-//     var v2 = this.mesh.normals[vertexIndex];
-//     vec3.scaleAndAdd(vector, v1,v2,coeff);
-//     this.mesh.vertices[vertexIndex*3] = vector[0];
-//     this.mesh.vertices[vertexIndex*3 + 1] = vector[1];
-//     this.mesh.vertices[vertexIndex*3 + 2] = vector[2];   
-// }
-
-
-
 BodyMesh.prototype.generateCraters = function(count, radius, percent) {
     var vertices = this.mesh.vertices;
     var coeff = (percent / 100)*(-1);
